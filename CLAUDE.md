@@ -241,3 +241,51 @@ orchestrator-agent/
 └── docs/
     └── workflow.md              # 工作流详细说明
 ```
+
+## 并行会话（Git Worktree）
+
+如果需要同时开多个 orchestrator 对话（比如一个做每日协调、一个做飞书方案、一个做周报），使用 Git Worktree 让每个会话拥有独立的工作目录，互不覆盖文件。
+
+### 为什么 worktree 放在 workspace 同级而不是 `.claude/worktrees/` 里
+
+orchestrator 通过相对路径访问子 agent（`../douyin-shop-agent/` 等）。如果 worktree 嵌套在 `.claude/worktrees/` 里（3 层深），这些路径会断裂。放在 workspace 同级目录，路径深度不变，CLAUDE.md 的所有指令正常工作。
+
+### 使用方法
+
+```bash
+# 1. 创建 worktree（在 workspace 同级目录）
+cd /Users/ll/workspace/orchestrator-agent
+git worktree add ../orchestrator-agent-wt-<任务名> -b wt/<任务名>
+cd ../orchestrator-agent-wt-<任务名>
+
+# 2. 启动独立会话
+claude
+
+# 3. 工作完成后，回到主目录合并
+cd /Users/ll/workspace/orchestrator-agent
+git merge wt/<任务名>
+git worktree remove ../orchestrator-agent-wt-<任务名>
+git branch -d wt/<任务名>
+```
+
+### 实际示例
+
+```bash
+# Terminal 1: 主会话（日常协调）
+cd /Users/ll/workspace/orchestrator-agent && claude
+
+# Terminal 2: 并行做飞书导入方案
+cd /Users/ll/workspace/orchestrator-agent
+git worktree add ../orchestrator-agent-wt-feishu -b wt/feishu
+cd ../orchestrator-agent-wt-feishu && claude
+
+# Terminal 3: 并行整理周报
+git worktree add ../orchestrator-agent-wt-weekly -b wt/weekly
+cd ../orchestrator-agent-wt-weekly && claude
+```
+
+### 注意事项
+
+- worktree 是完整副本（共享 `.git`），`.env` 等 gitignored 的文件不会出现在 worktree 中，需手动复制
+- 完成后记得 `git worktree remove` 清理，否则 `git worktree list` 会堆积
+- 不同 worktree 尽量写不同的文件，避免 merge 冲突
