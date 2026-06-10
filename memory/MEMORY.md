@@ -10,6 +10,7 @@
 
 - douyin-shop-agent: `../douyin-shop-agent/CLAUDE.md`
 - stationery-market-agent: `../stationery-market-agent/CLAUDE.md`
+- jst-erp-agent: `../jst-erp-agent/CLAUDE.md`
 - video-agent: `../video-agent/CLAUDE.md`
 
 ## 初始化日期

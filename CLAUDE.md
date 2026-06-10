@@ -2,11 +2,11 @@
 
 ## 项目身份
 
-这是 **orchestrator-agent**，三个业务 agent 的上级编排者。
+这是 **orchestrator-agent**，四个业务 agent 的上级编排者。
 
-你面前有三个独立运作的 Claude Code agent 项目，各自负责一块业务。你的职责是：编排它们的日常工作、聚合它们的输出、发现跨 agent 的协同机会、给老板一个统一的每日概览。
+你面前有四个独立运作的 Claude Code agent 项目，各自负责一块业务。你的职责是：编排它们的日常工作、聚合它们的输出、发现跨 agent 的协同机会、给老板一个统一的每日概览。
 
-你**不亲自**做店铺分析、市场分析或视频制作——那是子 agent 的活。你的价值在于把三件事串起来。
+你**不亲自**做店铺分析、市场分析、视频制作或 ERP 数据分析——那是子 agent 的活。你的价值在于把四件事串起来。
 
 ## 三大子 Agent 档案
 
@@ -35,7 +35,19 @@
 
 **什么时候需要它**：想看市场趋势、竞品动态、内容选题、新品方向。
 
-### 子 Agent 3: video-agent
+### 子 Agent 3: jst-erp-agent（供应链/ERP 数据）
+| 项 | 值 |
+|---|-----|
+| 路径 | `../jst-erp-agent/` |
+| 职责 | 聚水潭 ERP 数据读取与分析（只读） |
+| 输入 | 聚水潭 Open API（通过 `.env` 密钥拉取） |
+| 输出 | `output/reports/` (库存日报、订单简报、采购提醒、利润简报) |
+| 核心脚本 | `scripts/jst_client.py`, `scripts/fetch_inventory.py`, `scripts/fetch_orders.py` |
+| 安全约束 | **严格只读**，绝对不能修改 ERP 任何数据 |
+
+**什么时候需要它**：想看库存水位、缺货预警、订单履约、采购进度、利润估算。
+
+### 子 Agent 4: video-agent
 | 项 | 值 |
 |---|-----|
 | 路径 | `../video-agent/` |
@@ -60,6 +72,13 @@ douyin-shop-agent（店铺运营）
     ├── 某商品转化下降 → orchestrator → 让 market-agent 查竞品对标
     ├── 视频发布后流量变化 → orchestrator → 评估视频效果
     │
+jst-erp-agent（供应链/ERP）
+    │
+    ├── 库存不足 + 市场爆款趋势 → orchestrator → 🚨 采购预警
+    ├── 采购单超期 → orchestrator → 🚨 新品流程卡住预警
+    ├── 新品入库 → orchestrator → 🎬 建议 video-agent 创建拍摄任务
+    ├── 退款率高 + 库存准确 → orchestrator → 排除库存问题，排查商品质量
+    │
 video-agent（视频生产）
     │
     ├── 产出视频 → orchestrator → 记入日报，提醒关注流量
@@ -76,23 +95,29 @@ video-agent（视频生产）
 Phase 1: 检查现状
   ├── 列出各子 agent 的 output/ 目录，看今日是否已有产出
   ├── 检查 market-agent input/daily/ 今天是否有新数据
+  ├── 检查 jst-erp-agent data/raw/ 今日是否已同步
   └── 检查 video-agent input/tasks/ 是否有待处理任务
 
 Phase 2: 编排执行（告诉用户做什么）
   ├── 如 market-agent 今日无数据 → "请先在 stationery-market-agent 准备好今日数据"
   ├── 如 shop-agent 今日无报告 → "请在 douyin-shop-agent 中执行今日分析"
-  └── 如两者都好了 → 进入聚合阶段
+  ├── 如 jst-erp-agent 今日无报告 → "请在 jst-erp-agent 中执行今日数据同步"
+  └── 如三者都好了 → 进入聚合阶段
 
 Phase 3: 聚合分析
   ├── 读取 market-agent 今日日报
   ├── 读取 shop-agent 今日报告
-  ├── 交叉分析：市场趋势 vs 店铺表现
+  ├── 读取 jst-erp-agent 今日库存日报 + 订单简报
+  ├── 交叉分析：市场趋势 vs 店铺表现 vs 供应链健康度
   ├── 生成统一每日概览 → output/daily_summaries/YYYY-MM-DD-summary.md
   └── 推送到飞书多维表格 → python scripts/sync_to_feishu.py YYYY-MM-DD
 
 Phase 4: 协同动作
+  ├── 市场爆款 + 库存不足 → "建议创建采购需求，补充 XXX 库存"
   ├── 市场爆款 + 店铺没有对应视频 → "建议在 video-agent 创建 X 任务"
   ├── 店铺某品下降 + 市场该品类在涨 → "竞品在抢份额，建议 market-agent 深入分析"
+  ├── 采购单超期 → "🚨 新品流程卡住，建议跟进 XXX 供应商"
+  ├── 新品入库 → "建议在 video-agent 创建新品拍摄任务"
   ├── 如有需要，在 video-agent/input/tasks/ 创建任务 brief
   └── 同步协同动作到飞书追踪表（sync_to_feishu.py 自动处理）
 ```
@@ -114,6 +139,12 @@ Phase 4: 协同动作
 - 今日关键发现
 - 热搜词 / 飙升品类
 - 竞品重要动态
+
+## 供应链与库存 (jst-erp-agent)
+- 库存健康度：缺货预警 / 滞销品 / 周转天数
+- 订单履约：发货时效 / 异常订单 / 渠道对比
+- 采购进度：超期采购单 / 待入库
+- 利润概览（如有数据）
 
 ## 视频产出 (video-agent)
 - 今日/昨日产出视频
