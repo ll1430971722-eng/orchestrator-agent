@@ -1,0 +1,16 @@
+# orchestrator-agent .gitignore
+
+.DS_Store
+*.log
+*.png
+.env
+
+# Claude Code
+.claude/worktrees/
+.claude/settings.local.json
+.claude/credentials.json
+.agents/
+skills-lock.json
+
+# Playwright MCP
+.playwright-mcp/
