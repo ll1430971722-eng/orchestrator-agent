@@ -8,7 +8,7 @@
 
 你**不亲自**做店铺分析、市场分析、视频制作或 ERP 数据分析——那是子 agent 的活。你的价值在于把四件事串起来。
 
-## 三大子 Agent 档案
+## 四大子 Agent 档案
 
 ### 子 Agent 1: douyin-shop-agent
 | 项 | 值 |
@@ -210,7 +210,7 @@ orchestrator-agent 于 YYYY-MM-DD 基于 [市场趋势 / 店铺需求 / 热点] 
 - **不确定时**：标注"待确认"，不伪装确定
 
 每次交互结束时主动问：
-> "需要我深入分析哪个方向？或者需要我给 video-agent / market-agent / shop-agent 下发什么任务？"
+> "需要我深入分析哪个方向？或者需要我给 video-agent / market-agent / shop-agent / jst-erp-agent 下发什么任务？"
 
 ## 飞书集成
 
@@ -251,7 +251,7 @@ python scripts/sync_to_feishu.py
 
 ## 记忆系统
 
-本项目的 `memory/` 用于跨天追踪：
+本项目的 `memory/` 是一个**符号链接**，指向 `../orchestrator-agent-shared-memory/`。所有 worktree 共享同一份物理文件，在一个 worktree 中写入，其他 worktree 立即可见，无需手动 git merge。
 
 | 文件 | 用途 |
 |------|------|
@@ -260,20 +260,29 @@ python scripts/sync_to_feishu.py
 | `memory/business-context.md` | Lee 的业务上下文：团队架构、人员分工、新品流程 |
 | `memory/MEMORY.md` | 记忆索引 |
 
-每天结束时更新 daily-log，发现新的协同规律时更新 cross-agent-insights。
+**共享记忆规则**：
+- 写入 `memory/` 时使用追加模式（append-only），避免覆盖其他 session 的写入
+- 共享目录 `../orchestrator-agent-shared-memory/` 自身是一个独立的 git 仓库，用于版本管理
+- 每天结束时更新 daily-log，发现新的协同规律时更新 cross-agent-insights
+
+**首次设置**（仅在新机器 clone 后执行一次）：
+```bash
+mkdir /Users/ll/workspace/orchestrator-agent-shared-memory
+cd /Users/ll/workspace/orchestrator-agent-shared-memory
+git init && git commit --allow-empty -m "init: shared memory repo"
+cd /Users/ll/workspace/orchestrator-agent
+ln -s ../orchestrator-agent-shared-memory memory
+```
 
 ## 项目结构约定
 
 ```
 orchestrator-agent/
-├── CLAUDE.md                    # 本文件（核心）
+├── CLAUDE.md                    # 本文件（核心）— 只在 master 修改
 ├── README.md
 ├── .gitignore
-├── memory/
-│   ├── MEMORY.md                # 记忆索引
-│   ├── daily-log.md             # 每日执行日志
-│   ├── cross-agent-insights.md  # 跨 agent 洞察
-│   └── business-context.md      # Lee 的业务上下文
+├── memory -> ../orchestrator-agent-shared-memory/   # 符号链接，跨 worktree 共享
+├── scripts/                     # 同步脚本（飞书等）
 ├── output/
 │   ├── daily_summaries/         # 每日统一概览
 │   └── weekly_reviews/          # 周度回顾
@@ -281,50 +290,45 @@ orchestrator-agent/
     └── workflow.md              # 工作流详细说明
 ```
 
-## 并行会话（Git Worktree）
+## 并行会话（Git Worktree）— 临时任务分身
 
-如果需要同时开多个 orchestrator 对话（比如一个做每日协调、一个做飞书方案、一个做周报），使用 Git Worktree 让每个会话拥有独立的工作目录，互不覆盖文件。
+当需要同时做多件事（比如一边做日常协调、一边做紧急修复），用 Git Worktree 创建**临时分身**。分身生命周期：**创建 → 干活 → 合并 → 删除**，一般不超过 3 天。
 
-### 为什么 worktree 放在 workspace 同级而不是 `.claude/worktrees/` 里
+### 核心规则
 
-orchestrator 通过相对路径访问子 agent（`../douyin-shop-agent/` 等）。如果 worktree 嵌套在 `.claude/worktrees/` 里（3 层深），这些路径会断裂。放在 workspace 同级目录，路径深度不变，CLAUDE.md 的所有指令正常工作。
+| 规则 | 说明 |
+|------|------|
+| ✅ 可以读 | 子 agent 的 `output/`、共享 `memory/`（通过 symlink） |
+| ✅ 可以写 | 本项目的 `output/`、`../video-agent/input/tasks/` |
+| ❌ 禁止改 | `CLAUDE.md`、`scripts/`、`.claude/` 配置 — 这些都只在 master 改 |
+| ❌ 禁止长存 | 任务完成立即合并删除，不保留常驻 worktree |
+
+### 为什么 worktree 放在 workspace 同级
+
+orchestrator 通过相对路径访问子 agent（`../douyin-shop-agent/` 等）。worktree 放在 workspace 同级目录，路径深度不变，所有指令正常工作。`memory/` 是 symlink，指向同级目录的共享记忆，也不受影响。
 
 ### 使用方法
 
 ```bash
-# 1. 创建 worktree（在 workspace 同级目录）
+# 1. 创建临时分身
 cd /Users/ll/workspace/orchestrator-agent
 git worktree add ../orchestrator-agent-wt-<任务名> -b wt/<任务名>
 cd ../orchestrator-agent-wt-<任务名>
 
-# 2. 启动独立会话
+# 2. 启动独立会话干活
 claude
 
-# 3. 工作完成后，回到主目录合并
+# 3. 完成后，回主目录合并并清理
 cd /Users/ll/workspace/orchestrator-agent
 git merge wt/<任务名>
 git worktree remove ../orchestrator-agent-wt-<任务名>
 git branch -d wt/<任务名>
 ```
 
-### 实际示例
-
-```bash
-# Terminal 1: 主会话（日常协调）
-cd /Users/ll/workspace/orchestrator-agent && claude
-
-# Terminal 2: 并行做飞书导入方案
-cd /Users/ll/workspace/orchestrator-agent
-git worktree add ../orchestrator-agent-wt-feishu -b wt/feishu
-cd ../orchestrator-agent-wt-feishu && claude
-
-# Terminal 3: 并行整理周报
-git worktree add ../orchestrator-agent-wt-weekly -b wt/weekly
-cd ../orchestrator-agent-wt-weekly && claude
-```
-
 ### 注意事项
 
-- worktree 是完整副本（共享 `.git`），`.env` 等 gitignored 的文件不会出现在 worktree 中，需手动复制
-- 完成后记得 `git worktree remove` 清理，否则 `git worktree list` 会堆积
-- 不同 worktree 尽量写不同的文件，避免 merge 冲突
+- 新 worktree 自动继承 `memory` symlink，无需额外配置
+- 如果在 worktree 中需要修改 CLAUDE.md，先记下来，切回 master 再改
+- `.env` 等 gitignored 文件不会出现在 worktree 中，需手动复制
+- 完成后务必 `git worktree remove` 清理，避免堆积
+- 如果 worktree 产出不需要合并（比如试验），可以直接 `git worktree remove --force` 丢弃
