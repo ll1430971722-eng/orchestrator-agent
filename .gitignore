@@ -14,3 +14,29 @@ skills-lock.json
 
 # Playwright MCP
 .playwright-mcp/
+.browser-data/
+
+# 抖音运营数据 - 体积大，不提交
+data/raw/
+data/processed/
+data/auth/
+data/browser_profile/
+data/screenshots/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 输出报告临时文件
+output/reports/.temp/
