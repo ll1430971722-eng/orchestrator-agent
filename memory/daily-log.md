@@ -46,6 +46,13 @@
   - 🟢 搜索流量爆发 +1246%，贡献 54.53% GMV
 - market-agent: 未执行
 - video-agent: 未执行
+- **飞书集成**：douyin 数据同步架构搭建
+  - 新建飞书表"抖音每日指标"(tblK15Duu70dPX6G)：53字段，支持图表可视化
+  - 新建飞书表"抖音每日问题追踪"(tblOZGoovyt8qb0I)：问题+原因+建议+状态
+  - 创建 `scripts/sync_douyin_to_feishu.py`：解析日报+诊断报告，写入飞书
+  - 创建 `scripts/create_feishu_tables.py`：建表脚本
+  - 已将 6/10 数据同步到两张表（1条指标 + 4条问题）
+  - 更新 CLAUDE.md：Phase 3 增加 douyin 指标同步步骤
 
 ### 2026-06-09
 - 状态: 初始化

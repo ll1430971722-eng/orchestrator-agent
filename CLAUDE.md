@@ -86,6 +86,7 @@ Phase 2: 编排执行（告诉用户做什么）
 Phase 3: 聚合分析
   ├── 读取 market-agent 今日日报
   ├── 读取 shop-agent 今日报告
+  ├── 同步 douyin 指标到飞书 → python scripts/sync_douyin_to_feishu.py YYYY-MM-DD
   ├── 交叉分析：市场趋势 vs 店铺表现
   ├── 生成统一每日概览 → output/daily_summaries/YYYY-MM-DD-summary.md
   └── 推送到飞书多维表格 → python scripts/sync_to_feishu.py YYYY-MM-DD
@@ -191,14 +192,21 @@ orchestrator-agent 于 YYYY-MM-DD 基于 [市场趋势 / 店铺需求 / 热点] 
 | Base | `GPFtbIOhCafB4HsANmVcbFOan4f` | https://vcnyjz2su8ck.feishu.cn/base/GPFtbIOhCafB4HsANmVcbFOan4f |
 | 每日运营概览表 | `tbldtOCO6pR5g7bP` | 一条记录 = 一天的完整概览 |
 | 每日运营追踪表 | `tblLck1taVRaxldS` | 协同动作 & 待办事项 |
+| 抖音每日指标表 | `tblK15Duu70dPX6G` | douyin 日报结构化指标（数字类型，可画图） |
+| 抖音每日问题追踪表 | `tblOZGoovyt8qb0I` | 每日问题诊断+原因+建议+状态追踪 |
+| 抖音行动建议明细表 | `tblPj7sBL74M07dN` | 每条建议独立一行，可追踪执行状态 |
 
 ### 同步方式
 
 ```bash
-# 手动同步某天
-python scripts/sync_to_feishu.py 2026-06-09
+# 同步 douyin 指标到飞书（独立表）
+python scripts/sync_douyin_to_feishu.py 2026-06-10
+
+# 同步 orchestrator 聚合概览到飞书
+python scripts/sync_to_feishu.py 2026-06-10
 
 # 同步今天（默认）
+python scripts/sync_douyin_to_feishu.py
 python scripts/sync_to_feishu.py
 ```
 
