@@ -1,0 +1,7 @@
+video_type: ai_generated
+generation_mode: text_to_video
+video_route: seedance_generation
+
+任务：公司抖音账号第一条 AI 生成视频
+主题：全公司为了第一条抖音开紧急会议，最终把问题抛给网友
+目标：最大化完播率、评论率、点赞率、转发率、关注率

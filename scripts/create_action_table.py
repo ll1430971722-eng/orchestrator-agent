@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 ORCHESTRATOR_ROOT = Path(__file__).resolve().parent.parent
-FEISHU_MCP = ORCHESTRATOR_ROOT.parent / "feishu-agent" / "mcp-server"
+FEISHU_MCP = ORCHESTRATOR_ROOT / "mcp-servers" / "feishu"
 sys.path.insert(0, str(FEISHU_MCP))
 
 from feishu_client import get_client

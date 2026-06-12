@@ -1,0 +1,14 @@
+# v3 版本说明：未使用 Seedance
+
+本版视频改用真实素材 + AI 口播方案，未调用 Seedance API。
+
+## 原因
+- Seedance reference_to_video 生成的样品间与真实样品间不符
+- Seedance r2v 模式默认输出 16:9/5秒，无法满足需求
+- 用户需要口播配音
+
+## 实际方案
+- 素材：DJI Osmo Pocket 3 实拍样品间视频（真实素材）
+- 口播：edge-tts (zh-CN-XiaoxiaoNeural, +8% rate)
+- 字幕：Pillow + ffmpeg overlay
+- 格式：720×1280 (9:16), 8.6秒

@@ -1,0 +1,44 @@
+target_platform:
+target_account:
+video_route: auto
+video_type:
+generation_mode:
+topic:
+material_description:
+desired_style:
+publishing_goal:
+target_duration:
+output_language: zh
+
+# ── 字段说明 ──
+#
+# video_route（路线选择）：
+#   auto                               → Agent 自动判断
+#   seedance_generation                → 强制走 Seedance AI 视频生成
+#   real_footage_ai_voiceover_jianying → 强制走真实素材剪辑
+#
+# video_type（视频类型）：
+#   ai_generated  → AI 视频生成
+#   real_footage  → 真实素材剪辑
+#
+# generation_mode（生成模式）：
+#   text_to_video        → 无素材，纯文字生成 AI 视频
+#   reference_to_video   → 用 assets/ 中的素材作为参考，Seedance 生成新视频
+#   real_footage_edit    → 真实素材作为主体，走剪辑路线
+#
+# ── 三种常见任务 ──
+#
+# 1. 无素材 AI 生成：
+#    video_type: ai_generated
+#    generation_mode: text_to_video
+#    assets/ 留空
+#
+# 2. 有参考素材 AI 生成：
+#    video_type: ai_generated
+#    generation_mode: reference_to_video
+#    assets/ 放入参考图片或视频
+#
+# 3. 真实素材剪辑：
+#    video_type: real_footage
+#    generation_mode: real_footage_edit
+#    assets/ 放入素材

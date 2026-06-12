@@ -1,0 +1,9 @@
+video_type: real_footage
+generation_mode: real_footage_edit
+video_route: real_footage_ai_voiceover_jianying
+
+任务：公司抖音账号第一条互动视频（员工讨论样品间版 v3 — 真实素材 + 口播）
+主题：员工在样品间讨论公司第一次发抖音该怎么做，向网友发问
+素材：DJI Osmo Pocket 3 实拍样品间视频 (42秒)
+目标：生成8-10秒竖屏视频，真实样品间画面 + AI 口播 + 字幕引导评论
+风格：真实、年轻、自然、互动感、不过度浮夸

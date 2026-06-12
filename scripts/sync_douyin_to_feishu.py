@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-解析 douyin-shop-agent 日报，同步结构化数据到飞书多维表格
+解析 douyin 日报，同步结构化数据到飞书多维表格
 
 用法:
   python scripts/sync_douyin_to_feishu.py 2026-06-10
@@ -14,7 +14,7 @@ from datetime import datetime
 import json
 
 ORCHESTRATOR_ROOT = Path(__file__).resolve().parent.parent
-FEISHU_MCP = ORCHESTRATOR_ROOT.parent / "feishu-agent" / "mcp-server"
+FEISHU_MCP = ORCHESTRATOR_ROOT / "mcp-servers" / "feishu"
 sys.path.insert(0, str(FEISHU_MCP))
 
 from feishu_client import get_client, FeishuAPIError
@@ -25,7 +25,7 @@ DAILY_METRICS_TABLE_ID = "tblK15Duu70dPX6G"
 PROBLEM_TRACKING_TABLE_ID = "tblOZGoovyt8qb0I"
 ACTION_TABLE_ID = "tblPj7sBL74M07dN"
 
-DOUYIN_REPORTS = ORCHESTRATOR_ROOT.parent / "douyin-shop-agent" / "output" / "reports"
+DOUYIN_REPORTS = ORCHESTRATOR_ROOT / "output" / "reports"
 
 
 # ═══════════════════════════════════════════════════
@@ -57,7 +57,7 @@ def parse_change_pct(text: str) -> float:
 
 
 def parse_daily_metrics(date_str: str) -> dict:
-    """解析 douyin-shop-agent daily_report 为结构化指标"""
+    """解析 douyin daily_report 为结构化指标"""
     filepath = DOUYIN_REPORTS / f"daily_report_{date_str}.md"
     if not filepath.exists():
         print(f"❌ 日报不存在: {filepath}")
@@ -530,7 +530,7 @@ def parse_problems(date_str: str) -> tuple:
             "解决建议": sug_summary,
             "新手解释": _clean_markdown(newbie, max_len=400),
             "状态": "待处理",
-            "来源报告": f"douyin-shop-agent/output/reports/problem_diagnosis_{date_str}.md",
+            "来源报告": f"output/reports/problem_diagnosis_{date_str}.md",
         })
 
     return problems, actions
@@ -568,6 +568,21 @@ def _build_suggestion_summary(items: list) -> str:
 # 推送到飞书
 # ═══════════════════════════════════════════════════
 
+# 需要归一化到 0-1 范围的 Progress 字段（升级后的 ui_type=Progress）
+_PROGRESS_FIELDS = {
+    "GMV较昨日变化（%）", "订单数较昨日变化（%）", "客单价较昨日变化（%）",
+    "退款率-支付口径（%）", "退款率较昨日变化（%）", "7日累计退款率（%）",
+    "退款原因TOP1占比（%）", "退款原因TOP2占比（%）",
+    "曝光-点击率（%）", "曝光-点击率较昨日变化（%）", "同行曝光-点击率标杆（%）",
+    "点击-成交转化率（%）", "点击-成交转化率较昨日变化（%）", "同行点击-成交率基准（%）",
+    "曝光较昨日变化（%）",
+    "搜索GMV占比（%）", "搜索环比（%）",
+    "精选联盟GMV占比（%）", "精选联盟环比（%）",
+    "短视频GMV占比（%）", "短视频环比（%）",
+    "商城GMV占比（%）",
+}
+
+
 def _to_feishu_fields(data: dict) -> dict:
     """转换字段为飞书 API 格式"""
     fields = {}
@@ -590,7 +605,11 @@ def _to_feishu_fields(data: dict) -> dict:
         elif isinstance(value, str):
             fields[key] = value
         elif isinstance(value, (int, float)):
-            fields[key] = value
+            # Progress 字段需要 0-1 范围，将百分比值归一化
+            if key in _PROGRESS_FIELDS and abs(value) > 1.0:
+                fields[key] = value / 100.0
+            else:
+                fields[key] = value
         elif isinstance(value, bool):
             fields[key] = value
 

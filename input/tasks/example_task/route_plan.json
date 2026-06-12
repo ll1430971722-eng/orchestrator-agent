@@ -1,0 +1,13 @@
+{
+  "selected_route": "real_footage_ai_voiceover_jianying",
+  "generation_mode": "real_footage_edit",
+  "reason": "brief.txt 中 video_type 为 real_footage",
+  "target_platform": "视频号",
+  "target_account": "",
+  "topic": "车间日常",
+  "task_path": "/Users/ll/video-agent/input/tasks/example_task",
+  "has_assets": true,
+  "asset_count": 1,
+  "need_user_choice": false,
+  "next_step": "运行 scripts/run_real_footage_pipeline.py 串联 素材分析 → 爆点方向 → 口播 → 字幕 → 剪辑方案"
+}

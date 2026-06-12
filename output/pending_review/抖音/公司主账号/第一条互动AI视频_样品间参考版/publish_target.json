@@ -1,0 +1,13 @@
+{
+  "platform": "抖音",
+  "account": "公司主账号",
+  "video_type": "ai_generated",
+  "generation_mode": "text_to_video",
+  "task_id": "cgt-20260530115644-nxr77",
+  "version": "样品间参考版",
+  "reference_assets": "input/tasks/公司号第一条互动视频/assets/ (样品间视频)",
+  "goal": "提升完播率、评论率、点赞率、转发率、关注率",
+  "target_duration": "8秒",
+  "aspect_ratio": "9:16",
+  "status": "pending_review"
+}

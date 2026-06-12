@@ -1,0 +1,15 @@
+pending_review
+
+生成信息：
+- Seedance Task ID: cgt-20260530162643-kjtnp
+- 模型: doubao-seedance-2-0-260128
+- 版本: 样品间参考版（真实 reference_to_video）
+- 参考素材: DJI_20260526110800_0202_D.MP4（样品间实拍，已压缩上传至TOS）
+- 素材URL: video-agent-reference/sample-room-ref.mp4
+- 分辨率: 720p
+- 比例: 16:9（⚠️ Seedance r2v模式跟随了参考视频比例，非9:16）
+- 实际时长: 5秒
+- 帧率: 24fps
+- 音频: 已生成
+- 生成时间: 2026-05-30 16:26 → 17:12
+- 生成模式: reference_to_video（非纯文本生成）

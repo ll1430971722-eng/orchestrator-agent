@@ -1,0 +1,29 @@
+{
+  "version": "v3 — 真实素材 + AI口播",
+  "footage": {
+    "source": "DJI_20260526110800_0202_D.MP4",
+    "description": "文具/笔袋公司样品间实拍 (DJI Osmo Pocket 3)",
+    "duration_seconds": 42.63,
+    "resolution": "3840x2160",
+    "fps": 59.94,
+    "codec": "HEVC",
+    "file_size_mb": 574.7
+  },
+  "voiceover": {
+    "engine": "edge-tts",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+8%",
+    "script": "一个文具笔袋公司的抖音号该发什么？我们在样品间讨论了，最后决定先问你们。你们想看什么？",
+    "duration_seconds": 8.54
+  },
+  "post_processing": {
+    "method": "ffmpeg + Pillow text overlays",
+    "final_resolution": "720x1280",
+    "final_aspect_ratio": "9:16",
+    "final_duration_seconds": 8.6,
+    "text_renderer": "Pillow with STHeiti font",
+    "footage_clips_used": ["3-5.1s", "12-15s", "25-28.5s"],
+    "conversion_method": "blurred_background_padding"
+  },
+  "note": "Seedance r2v 方案已弃用，改用真实素材+AI口播。样品间画面100%来自用户提供的DJI实拍视频。"
+}
