@@ -12,7 +12,7 @@
 5. **每日汇总** — 聚合产出、推飞书
 6. **协同编排** — 跨模块联动（店铺异常→视频补救、库存预警→采购建议）
 
-## 全部 Skills（15 个）
+## 全部 Skills（21 个）
 
 ### 抖店运营（4 个，已可用）
 
@@ -56,10 +56,15 @@
 
 ERP API 客户端：`scripts/erp/jst_client.py`。数据采集和分析脚本待补齐。
 
-### 其他
+### 战略 & 工具（6 个）
 
 | Skill | 说明 |
 |-------|------|
+| `/market-insight` | 用户洞察与产品机会分析，3 阶段框架（用户画像→情绪驱动→产品机会） |
+| `/competitor-analysis` | 竞品深度分析，4 步产出定位差距图和差异化策略 |
+| `/idea-validator` | 创意可行性验证，6 阶段给出 Go/No-Go 建议 |
+| `/planning-with-files` | 文件化任务规划，复杂任务前强制写 task_plan + findings + progress |
+| `/skill-creator` | 创建/优化/评估 Skills，含安全扫描和 benchmark |
 | `/feishu-table-design` | 飞书多维表格结构设计参考 |
 
 ## Python 脚本
@@ -402,22 +407,28 @@ orchestrator-agent/
 ├── .browser-data/                   # Playwright 浏览器数据
 ├── memory -> ../orchestrator-agent-shared-memory/  # 符号链接，跨 worktree 共享
 ├── .claude/
-│   ├── skills/                      # 15 个 Skills
-│   │   ├── douyin-login.md
-│   │   ├── douyin-quick-check.md
-│   │   ├── douyin-fetch-data.md
-│   │   ├── douyin-daily-analysis.md
-│   │   ├── feishu-operations.md
-│   │   ├── feishu-table-design.md
-│   │   ├── video-task-planning.md
-│   │   ├── seedance-reference-video.md
-│   │   ├── sample-room-video.md
-│   │   ├── douyin-publish-package.md
-│   │   ├── jst-daily-sync.md
-│   │   ├── jst-inventory-check.md
-│   │   ├── jst-order-sync.md
-│   │   ├── jst-procurement-track.md
-│   │   └── jst-profit-report.md
+│   ├── skills/                      # 21 个 Skills（子目录格式 SKILL.md）
+│   │   ├── douyin-login/SKILL.md
+│   │   ├── douyin-quick-check/SKILL.md
+│   │   ├── douyin-fetch-data/SKILL.md
+│   │   ├── douyin-daily-analysis/SKILL.md
+│   │   ├── feishu-operations/SKILL.md
+│   │   ├── feishu-table-design/SKILL.md
+│   │   ├── video-task-planning/SKILL.md
+│   │   ├── seedance-reference-video/SKILL.md
+│   │   ├── sample-room-video/SKILL.md
+│   │   ├── douyin-publish-package/SKILL.md
+│   │   ├── jst-daily-sync/SKILL.md
+│   │   ├── jst-inventory-check/SKILL.md
+│   │   ├── jst-order-sync/SKILL.md
+│   │   ├── jst-procurement-track/SKILL.md
+│   │   ├── jst-profit-report/SKILL.md
+│   │   ├── market-insight/SKILL.md
+│   │   ├── competitor-analysis/SKILL.md
+│   │   ├── idea-validator/SKILL.md
+│   │   ├── planning-with-files/SKILL.md
+│   │   ├── skill-creator/SKILL.md
+│   │   └── agent-browser -> ../../.agents/skills/agent-browser
 │   └── settings.local.json          # MCP 配置（Playwright + Feishu）
 ├── mcp-servers/
 │   └── feishu/                      # 飞书 MCP Server
