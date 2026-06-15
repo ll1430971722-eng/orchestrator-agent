@@ -466,9 +466,12 @@ def parse_tracking_records(date_str: str) -> list:
         if data_match:
             data_basis = data_match.group(1).strip()
 
-        # 根因分析
+        # 根因分析: 从"可能原因"到下一个 bold 标题（建议验证/具体解决/新手解释）
         root_cause = ""
-        root_match = re.search(r'\*\*可能原因.*?\*\*\n\n(.*?)(?=\n\*\*|\n###|\Z)', section, re.DOTALL)
+        root_match = re.search(
+            r'\*\*可能原因.*?\*\*\s*\n(.*?)(?=\n\*\*建议验证|\n\*\*具体解决|\n\*\*💡|\n\*\*未来|\n###|\Z)',
+            section, re.DOTALL
+        )
         if root_match:
             root_cause = root_match.group(1).strip()
 
@@ -488,13 +491,19 @@ def parse_tracking_records(date_str: str) -> list:
             analysis_parts.append(f"说明: {newbie}")
         analysis = "\n\n".join(analysis_parts)
 
-        # 提取解决建议中的行动表格
+        # 提取"具体解决方案"章节的行动表格（只在这个章节内解析，避免误解析"风险评估"表）
         suggestions = ""
-        sug_match = re.search(r'\*\*具体解决方案[：:]\*\*\n\n(.*?)(?=\n\*\*|\n###|\Z)', section, re.DOTALL)
+        sug_match = re.search(
+            r'\*\*具体解决方案[：:]\*\*\n\n(.*?)(?=\n\*\*|\n###|\n---|\Z)',
+            section, re.DOTALL
+        )
         if sug_match:
             suggestions = sug_match.group(1).strip()
 
         action_items = _parse_action_table_new(suggestions)
+
+        # 清理问题分析 — 移除原始 markdown 表格行
+        clean_analysis = _clean_analysis_text(analysis)
 
         if action_items:
             # 每个行动一条记录
@@ -503,8 +512,10 @@ def parse_tracking_records(date_str: str) -> list:
                     "日期": date_str,
                     "问题标题": _clean_markdown(title, max_len=200),
                     "优先级": priority,
-                    "问题分析": _clean_markdown(analysis, max_len=1000),
+                    "问题分析": _clean_markdown(clean_analysis, max_len=1000),
                     "解决动作": _clean_markdown(act["action"], max_len=200),
+                    "预期效果": act.get("effect", ""),
+                    "难度": act.get("difficulty", ""),
                     "负责人": act.get("owner", ""),
                     "状态": "待处理",
                 })
@@ -521,8 +532,26 @@ def parse_tracking_records(date_str: str) -> list:
     return records
 
 
+def _clean_analysis_text(analysis: str) -> str:
+    """清理分析文本：移除残留的 markdown 表格行和多余格式"""
+    if not analysis:
+        return ""
+    lines = analysis.split('\n')
+    cleaned = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            cleaned.append(line)
+            continue
+        # 跳过 markdown 表格行（以 | 开头和结尾，或只是分隔线）
+        if stripped.startswith('|'):
+            continue
+        cleaned.append(line)
+    return '\n'.join(cleaned)
+
+
 def _parse_action_table_new(md_text: str) -> list:
-    """从markdown表格解析行动建议，提取action/owner"""
+    """从markdown表格解析行动建议，提取全部4列：方案/预期效果/难度/负责人"""
     items = []
     rows = re.findall(r'\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|', md_text)
     for row in rows:
@@ -530,11 +559,17 @@ def _parse_action_table_new(md_text: str) -> list:
         effect = row[1].strip() if len(row) > 1 else ""
         difficulty = row[2].strip() if len(row) > 2 else ""
         owner = row[3].strip() if len(row) > 3 else ""
-        if action in ['方案', '------', '---', ''] or '---' in action:
+        # 跳过表头行
+        if action in ['方案', '------', '---', '', '风险'] or '---' in action:
             continue
-        if '方案' in action.lower() or '预期' in action.lower():
+        if action in ['方案', '预期效果', '风险', '严重度']:
             continue
-        items.append({"action": action, "owner": owner})
+        items.append({
+            "action": action,
+            "effect": effect,
+            "difficulty": difficulty,
+            "owner": owner,
+        })
     return items
 
 
