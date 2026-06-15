@@ -518,6 +518,7 @@ def parse_tracking_records(date_str: str) -> list:
                     "难度": act.get("difficulty", ""),
                     "负责人": act.get("owner", ""),
                     "状态": "待处理",
+                    "执行进度": 0,
                 })
         else:
             # 没有解析出行动，只存问题

@@ -286,6 +286,19 @@ python scripts/sync_to_feishu.py
 - 共享目录 `../orchestrator-agent-shared-memory/` 自身是一个独立的 git 仓库
 - 每天结束时更新 daily-log，发现新的协同规律时更新 cross-agent-insights
 
+## 飞书表格设计铁律
+
+**所有飞书多维表格操作——无论什么业务场景（抖店、设计素材、视频管理、ERP、项目管理）——都必须遵循 `/feishu-table-design` skill 中的全部规范。** 该 skill 是设计规范的**唯一真相源**。
+
+核心原则（每次建表/改表时自动应用）：
+- 金额用 Currency（type 2），比例用 Progress，评分用 Rating，单选多选用颜色
+- 公式（type 20）能自动算的不要人工填
+- 跨表关联（type 18）+ 查找引用（type 19）代替复制粘贴
+- 图片/文件用 Attachment（type 17）存表里
+- 最少 2 个视图，按角色分层
+- 字段类型在创建时就选对，不要建完再改
+- 合理配置自动化规则（状态变更通知、到期催办、定时推送）
+
 ## 安全规则
 
 1. **抖店只读**：Playwright 操作只看不点修改按钮，不改任何店铺数据
