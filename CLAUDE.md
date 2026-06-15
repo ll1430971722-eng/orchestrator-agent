@@ -507,3 +507,17 @@ orchestrator-agent/
 - `.env` 等 gitignored 文件不会出现在 worktree 中，需手动复制
 - 如果在 worktree 中需要修改 CLAUDE.md，先记下来，切回 master 再改
 - 完成后务必 `git worktree remove` 清理，避免堆积
+
+### 分身同步协议（重要）
+
+**每个 worktree 分身结束任务时，必须执行 `/worktree-sync`**，将工作内容写入共享 memory。这是自动化规则，不需要用户提醒。
+
+同步机制：
+```
+分身结束任务 → /worktree-sync → memory/sync-records/YYYY-MM-DD-<分身名>.json
+                                     memory/daily-log.md（追加日志）
+    ↓
+主 Agent 汇总时 → 扫 memory/sync-records/ → 收集所有分身产出
+```
+
+分身之间通过 `memory/` 共享目录通信，不需要 agent 间直接对话。`memory/` 是符号链接，指向项目外的独立目录，所有 worktree 共享同一份物理文件。
