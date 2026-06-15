@@ -246,8 +246,7 @@ orchestrator-agent 于 YYYY-MM-DD 基于 [店铺需求 / 热点] 创建
 | 每日运营概览表 | `tbldtOCO6pR5g7bP` | 一条记录 = 一天的完整概览 |
 | 每日运营追踪表 | `tblLck1taVRaxldS` | 协同动作 & 待办事项 |
 | 抖音每日指标表 | `tblK15Duu70dPX6G` | douyin 日报结构化指标（数字类型，可画图） |
-| 抖音每日问题追踪表 | `tblOZGoovyt8qb0I` | 每日问题诊断+原因+建议+状态追踪 |
-| 抖音行动建议明细表 | `tblPj7sBL74M07dN` | 每条建议独立一行，可追踪执行状态 |
+| 问题 & 行动追踪表 | `tbl13n3VVldrXWmD` | 问题诊断+行动建议合并，每条=问题+动作+状态+效果评估 |
 
 ### MCP Server
 

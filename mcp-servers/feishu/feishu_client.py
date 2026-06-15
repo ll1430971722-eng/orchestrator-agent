@@ -11,8 +11,8 @@ from typing import Optional, Dict, Any
 import requests
 from dotenv import load_dotenv
 
-# 从项目根目录加载 .env
-_env_path = Path(__file__).resolve().parent.parent / ".env"
+# 从项目根目录加载 .env（feishu_client.py 在 mcp-servers/feishu/ 下，需向上 3 级）
+_env_path = Path(__file__).resolve().parent.parent.parent / ".env"
 load_dotenv(_env_path)
 
 

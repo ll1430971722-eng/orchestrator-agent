@@ -98,7 +98,7 @@ def push_overview(client, data: dict) -> dict:
         f"/bitable/v1/apps/{APP_TOKEN}/tables/{OVERVIEW_TABLE_ID}/records",
         params={"page_size": 10},
     )
-    existing_records = existing.get("data", {}).get("items", [])
+    existing_records = existing.get("data", {}).get("items") or []
     matching = [r for r in existing_records
                 if r.get("fields", {}).get("日期", 0) == target_ts]
 
