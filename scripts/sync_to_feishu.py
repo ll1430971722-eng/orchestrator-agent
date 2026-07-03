@@ -20,16 +20,17 @@ from datetime import datetime
 
 # ---- Path Setup ----
 ORCHESTRATOR_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ORCHESTRATOR_ROOT / "scripts"))
 FEISHU_MCP = ORCHESTRATOR_ROOT / "mcp-servers" / "feishu"
 sys.path.insert(0, str(FEISHU_MCP))
 
 from feishu_client import get_client, FeishuAPIError
-
-# ---- Constants ----
-APP_TOKEN = "GPFtbIOhCafB4HsANmVcbFOan4f"
-OVERVIEW_TABLE_ID = "tbldtOCO6pR5g7bP"
-TRACKING_TABLE_ID = "tblLck1taVRaxldS"
-OUTPUT_DIR = ORCHESTRATOR_ROOT / "output" / "daily_summaries"
+from config import (
+    FEISHU_APP_TOKEN as APP_TOKEN,
+    TABLE_DAILY_OVERVIEW as OVERVIEW_TABLE_ID,
+    TABLE_DAILY_TRACKING as TRACKING_TABLE_ID,
+    OUTPUT_DAILY_SUMMARIES as OUTPUT_DIR,
+)
 
 
 def parse_daily_summary(date_str: str) -> dict:

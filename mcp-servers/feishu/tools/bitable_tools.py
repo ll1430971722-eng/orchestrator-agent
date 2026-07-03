@@ -218,7 +218,7 @@ def _client_filter(records: list, filter_str: str) -> list:
 
 def _tenant_domain() -> str:
     import os
-    return "bytedance"
+    return os.getenv("FEISHU_TENANT_DOMAIN", "")
 
 
 # ═══════════════════════════════════════════════════════

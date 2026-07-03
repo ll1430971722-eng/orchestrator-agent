@@ -14,17 +14,18 @@ from datetime import datetime
 import json
 
 ORCHESTRATOR_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ORCHESTRATOR_ROOT / "scripts"))
 FEISHU_MCP = ORCHESTRATOR_ROOT / "mcp-servers" / "feishu"
 sys.path.insert(0, str(FEISHU_MCP))
 
 from feishu_client import get_client, FeishuAPIError
-
-# ── Constants ──
-APP_TOKEN = "GPFtbIOhCafB4HsANmVcbFOan4f"
-DAILY_METRICS_TABLE_ID = "tblK15Duu70dPX6G"
-TRACKING_TABLE_ID = "tbl13n3VVldrXWmD"  # 问题 & 行动追踪（合并表）
-
-DOUYIN_REPORTS = ORCHESTRATOR_ROOT / "output" / "reports"
+from config import (
+    FEISHU_APP_TOKEN as APP_TOKEN,
+    TABLE_DAILY_METRICS as DAILY_METRICS_TABLE_ID,
+    TABLE_ISSUES_ACTIONS as TRACKING_TABLE_ID,
+    OUTPUT_REPORTS as DOUYIN_REPORTS,
+    DEFAULT_ASP_PEER,
+)
 
 
 # ═══════════════════════════════════════════════════
@@ -118,8 +119,8 @@ def parse_daily_metrics(date_str: str) -> dict:
     if ch_match:
         channel_highlight = ch_match.group(1).strip()
 
-    # 客单价同行基准
-    asp_peer = 20.38
+    # 客单价同行基准（从日报中提取，兜底用配置值）
+    asp_peer = DEFAULT_ASP_PEER
     asp_peer_m = re.search(r'同行基准.*?¥([\d.]+)', content)
     if not asp_peer_m:
         asp_peer_m = re.search(r'同行.*?客单价.*?¥([\d.]+)', content)
