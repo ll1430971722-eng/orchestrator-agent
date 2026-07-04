@@ -6,13 +6,13 @@
 
 六大模块：
 1. **抖店运营分析** — Skills + Playwright MCP 拉数据、出报告
-2. **飞书操作** — 内置 MCP Server 读写文档/表格/消息
+2. **飞书操作** — Computer Use 操作浏览器访问飞书
 3. **视频生产** — Seedance AI 生成 + 实拍剪辑，内置脚本 + Skills
 4. **ERP 数据** — 聚水潭 API 客户端（alpha，脚本待补齐）
 5. **每日汇总** — 聚合产出、推飞书
 6. **协同编排** — 跨模块联动（店铺异常→视频补救、库存预警→采购建议）
 
-## 全部 Skills（21 个）
+## 全部 Skills（19 个）
 
 ### 抖店运营（4 个，已可用）
 
@@ -25,13 +25,11 @@
 
 使用 Playwright MCP 驱动浏览器访问 `fxg.jinritemai.com`，数据落地到 `data/raw/`，报告落到 `output/reports/`。**全程只读**，不点任何修改按钮。
 
-### 飞书操作（1 个）
+### 飞书操作（通过 Computer Use 访问）
 
-| Skill | 说明 |
-|-------|------|
-| `/feishu-operations` | 飞书操作指南：文档/表格/消息/日历/知识库 |
+不再使用 MCP Server，改为 Computer Use 控制浏览器访问飞书官网完成各项操作。
 
-飞书操作通过内置 MCP Server（`mcp-servers/feishu/`）完成，31 个工具覆盖 6 个域。
+飞书操作通过 Computer Use 控制浏览器访问飞书官网完成。
 
 ### 视频生产（4 个）
 
@@ -65,7 +63,6 @@ ERP API 客户端：`scripts/erp/jst_client.py`。数据采集和分析脚本待
 | `/idea-validator` | 创意可行性验证，6 阶段给出 Go/No-Go 建议 |
 | `/planning-with-files` | 文件化任务规划，复杂任务前强制写 task_plan + findings + progress |
 | `/skill-creator` | 创建/优化/评估 Skills，含安全扫描和 benchmark |
-| `/feishu-table-design` | 飞书多维表格结构设计参考 |
 
 ## Python 脚本
 
@@ -78,11 +75,11 @@ ERP API 客户端：`scripts/erp/jst_client.py`。数据采集和分析脚本待
 | `scripts/generate_report.py` | 生成日报 markdown |
 | `scripts/generate_action_plan.py` | 生成优先级排序的行动清单 |
 | `scripts/generate_future_recommendations.py` | 3/7/30 天展望建议 |
-| `scripts/sync_douyin_to_feishu.py` | 同步 douyin 指标到飞书多维表格 |
-| `scripts/sync_to_feishu.py` | 同步 orchestrator 聚合概览到飞书 |
+| `scripts/sync_douyin_to_feishu.py` | 待更新（旧 feishu MCP，需要改用 Computer Use） |
+| `scripts/sync_to_feishu.py` | 待更新（旧 feishu MCP，需要改用 Computer Use） |
 | `scripts/safety_check.py` | 代码安全审计 |
-| `scripts/create_feishu_views.py` | 创建飞书表格视图 |
-| `scripts/upgrade_feishu_tables.py` | 升级飞书表格结构 |
+| `scripts/create_feishu_views.py` | 待更新（旧 feishu MCP） |
+| `scripts/upgrade_feishu_tables.py` | 待更新（旧 feishu MCP） |
 
 ### 视频生产（`scripts/video/`）
 
@@ -124,7 +121,7 @@ orchestrator（运营中枢 — 所有能力内置）
     │
     ├── 抖店运营 ───→ Skills + Playwright MCP
     │   ├── 拉数据 / 算指标 / 出日报
-    │   └── 同步到飞书 ──→ 内置 feishu MCP Server
+    │   └── 同步到飞书 ──→ 通过 Computer Use 操作飞书
     │
     ├── 视频生产 ───→ Skills + scripts/video/
     │   ├── 根据店铺数据建议选题
@@ -136,8 +133,9 @@ orchestrator（运营中枢 — 所有能力内置）
     │   ├── 库存水位 / 缺货预警 / 采购进度
     │   └── 与店铺数据交叉分析
     │
-    ├── 飞书操作 ───→ 内置 MCP Server（mcp-servers/feishu/）
+    ├── 飞书操作 ───→ Computer Use 操作浏览器
     │   ├── 建文档 / 写表格 / 发消息
+    │   ├── 登录飞书官网进行操作
     │   └── 横向贯通所有数据到飞书
     │
     └── 每日汇总
@@ -154,18 +152,14 @@ Phase 1: 数据采集
   ├── /douyin-quick-check（如只需速览）
   └── /douyin-daily-analysis（如需完整日报）
 
-Phase 2: 飞书同步
-  ├── python scripts/sync_douyin_to_feishu.py YYYY-MM-DD
-  └── 将 douyin 指标写入飞书多维表格
-
-Phase 3: 跨域检查
+Phase 2: 跨域检查
   ├── 检查 output/pending_review/ 是否有待审核视频
   ├── 检查 input/tasks/ 是否有堆积任务
   └── 如有店铺异常，评估是否需要视频补救
 
 Phase 4: 生成统一概览
   ├── 写入 output/daily_summaries/YYYY-MM-DD-summary.md
-  └── 推送到飞书 → python scripts/sync_to_feishu.py YYYY-MM-DD
+  └── 通过 Computer Use 同步概览到飞书
 
 Phase 5: 协同动作
   ├── 店铺数据异常 → 在日报中标注，提醒老板
@@ -192,7 +186,7 @@ Phase 5: 协同动作
 - 建议新建的视频任务
 
 ## 飞书同步
-- 今日同步状态
+- 通过 Computer Use 完成飞书同步
 - 飞书文档/表格更新情况
 
 ## 明日关注
@@ -245,50 +239,21 @@ orchestrator-agent 于 YYYY-MM-DD 基于 [店铺需求 / 热点] 创建
 | Base | `GPFtbIOhCafB4HsANmVcbFOan4f` | https://vcnyjz2su8ck.feishu.cn/base/GPFtbIOhCafB4HsANmVcbFOan4f |
 | 每日运营概览表 | `tbldtOCO6pR5g7bP` | 一条记录 = 一天的完整概览 |
 | 每日运营追踪表 | `tblLck1taVRaxldS` | 协同动作 & 待办事项 |
-| 抖音每日指标表 | `tblK15Duu70dPX6G` | douyin 日报结构化指标（数字类型，可画图） |
-| 问题 & 行动追踪表 | `tbl13n3VVldrXWmD` | 问题诊断+行动建议合并，每条=问题+动作+状态+效果评估 |
+| 抖音每日指标表 | `tblK15Duu70dPX6G` | douyin 日报结构化指标 |
+| 问题 & 行动追踪表 | `tbl13n3VVldrXWmD` | 问题诊断+行动建议合并 |
 
-### MCP Server
+### 访问方式
 
-飞书 MCP Server 位于 `mcp-servers/feishu/`，配置在 `.claude/settings.local.json`。
+飞书操作通过 **Computer Use** 控制浏览器完成（不再使用 MCP Server）。
 
-### 同步方式
-
-```bash
-# 同步 douyin 指标到飞书（独立表）
-python scripts/sync_douyin_to_feishu.py 2026-06-10
-
-# 同步 orchestrator 聚合概览到飞书
-python scripts/sync_to_feishu.py 2026-06-10
-
-# 同步今天（默认）
-python scripts/sync_douyin_to_feishu.py
-python scripts/sync_to_feishu.py
-```
-
-脚本会自动：
-- **概览表**：覆盖写入（同一天只保留最新）
-- **追踪表**：追加写入（保留历史动作）
-
-## 记忆系统
-
-本项目的 `memory/` 是一个**符号链接**，指向 `../orchestrator-agent-shared-memory/`。所有 worktree 共享同一份物理文件。
-
-| 文件 | 用途 |
-|------|------|
-| `memory/daily-log.md` | 每日执行记录 |
-| `memory/cross-agent-insights.md` | 已验证的协同规律、因果关系 |
-| `memory/business-context.md` | Lee 的业务上下文：团队架构、人员分工、新品流程 |
-| `memory/MEMORY.md` | 记忆索引 |
-
-**共享记忆规则**：
-- 写入 `memory/` 时使用追加模式（append-only），避免覆盖其他 session 的写入
-- 共享目录 `../orchestrator-agent-shared-memory/` 自身是一个独立的 git 仓库
-- 每天结束时更新 daily-log，发现新的协同规律时更新 cross-agent-insights
+操作步骤：
+1. 通过 Computer Use 打开浏览器，访问飞书官网
+2. 登录飞书账号（如需）
+3. 在浏览器中操作文档、多维表格、消息等
 
 ## 飞书表格设计铁律
 
-**所有飞书多维表格操作——无论什么业务场景（抖店、设计素材、视频管理、ERP、项目管理）——都必须遵循 `/feishu-table-design` skill 中的全部规范。** 该 skill 是设计规范的**唯一真相源**。
+**所有飞书多维表格操作——无论什么业务场景（抖店、设计素材、视频管理、ERP、项目管理）——都必须遵循飞书表格设计规范。**
 
 核心原则（每次建表/改表时自动应用）：
 - 金额用 Currency（type 2），比例用 Progress，评分用 Rating，单选多选用颜色
@@ -304,7 +269,7 @@ python scripts/sync_to_feishu.py
 1. **抖店只读**：Playwright 操作只看不点修改按钮，不改任何店铺数据
 2. **ERP 只读**：聚水潭 API 只调用只读接口，不改任何 ERP 数据
 3. **不自动发布**：视频产出到 `output/pending_review/`，人工审核后发布
-4. **不删除飞书内容**：文档/表格始终追加，不覆盖不删除
+4. **不删除飞书内容**：在飞书中始终追加，不覆盖不删除
 5. **不混淆数据归属**：引用外部数据时标注来源
 6. **不打印密钥**：报告中不出现任何 API Key、Token、密码
 7. **不跳过人工审核**：所有协同动作先告知用户，确认后再执行
@@ -338,7 +303,7 @@ python scripts/sync_to_feishu.py
 - [ ] 不打印密钥（安全规则 6）
 - [ ] 错误处理不崩溃（传空参/缺文件时给明确报错而不是 traceback）
 
-**飞书操作 / MCP 工具调用：**
+**飞书操作 / Computer Use 操作：**
 - [ ] 先读后写（追加模式，安全规则 4）
 - [ ] 写入前告知用户"写什么、写到哪"
 - [ ] 写入后读回一条确认数据落地
@@ -357,7 +322,7 @@ python scripts/sync_to_feishu.py
 
 **Skills / 配置修改：**
 - [ ] 新增/修改 skill 后，检查 `description` 字段存在
-- [ ] `disable-model-invocation` 按安全策略设置（抖店/飞书/ERP 为 true）
+- [ ] `disable-model-invocation` 按安全策略设置（抖店/飞书/ERP 生产操作为 true）
 - [ ] 旧文件清理干净，不留残留 `.md` 在 skills 根目录
 
 ### 验收报告模板（发到聊天里给用户看）
@@ -419,13 +384,11 @@ orchestrator-agent/
 ├── .browser-data/                   # Playwright 浏览器数据
 ├── memory -> ../orchestrator-agent-shared-memory/  # 符号链接，跨 worktree 共享
 ├── .claude/
-│   ├── skills/                      # 21 个 Skills（子目录格式 SKILL.md）
+│   ├── skills/                      # 19 个 Skills（子目录格式 SKILL.md）
 │   │   ├── douyin-login/SKILL.md
 │   │   ├── douyin-quick-check/SKILL.md
 │   │   ├── douyin-fetch-data/SKILL.md
 │   │   ├── douyin-daily-analysis/SKILL.md
-│   │   ├── feishu-operations/SKILL.md
-│   │   ├── feishu-table-design/SKILL.md
 │   │   ├── video-task-planning/SKILL.md
 │   │   ├── seedance-reference-video/SKILL.md
 │   │   ├── sample-room-video/SKILL.md
@@ -441,13 +404,8 @@ orchestrator-agent/
 │   │   ├── planning-with-files/SKILL.md
 │   │   ├── skill-creator/SKILL.md
 │   │   └── agent-browser -> ../../.agents/skills/agent-browser
-│   └── settings.local.json          # MCP 配置（Playwright + Feishu）
-├── mcp-servers/
-│   └── feishu/                      # 飞书 MCP Server
-│       ├── server.py
-│       ├── feishu_client.py
-│       ├── tools/
-│       └── pyproject.toml
+│   └── settings.local.json          # MCP 配置（Playwright）
+# 飞书 MCP Server 已移除，改用 Computer Use 操作浏览器
 ├── scripts/
 │   ├── analyze_daily.py             # 抖店核心指标计算
 │   ├── diagnose_problems.py         # 问题诊断
