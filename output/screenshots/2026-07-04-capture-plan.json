@@ -1,0 +1,83 @@
+{
+  "date": "2026-07-04",
+  "platforms": {
+    "douyin": {
+      "platform": "抖音小店",
+      "date": "2026-07-04",
+      "capture_steps": [
+        {
+          "step": 1,
+          "target": "抖店后台 → 数据 → 核心数据",
+          "output": "screenshots/2026-07-04-douyin-core-data.png",
+          "instructions": [
+            "1. 打开浏览器，访问: https://shop.douyin.com/",
+            "2. 登录抖店后台",
+            "3. 导航到 数据 → 核心数据",
+            "4. 截图：GMV、访客数、成交件数、转化率面板",
+            "5. 保存截图到 output/screenshots/{dt}-douyin-core-data.png"
+          ]
+        },
+        {
+          "step": 2,
+          "target": "抖店后台 → 数据 → 流量分析",
+          "output": "screenshots/2026-07-04-douyin-traffic.png",
+          "instructions": [
+            "1. 导航到 数据 → 流量分析",
+            "2. 截图流量来源分布（商品卡、搜索、达人、千川、直播）",
+            "3. 保存截图到 output/screenshots/{dt}-douyin-traffic.png"
+          ]
+        },
+        {
+          "step": 3,
+          "target": "抖店后台 → 店铺 → 体验分",
+          "output": "screenshots/2026-07-04-douyin-score.png",
+          "instructions": [
+            "1. 导航到 店铺 → 体验分",
+            "2. 截图体验分详情（商品、物流、服务分项）",
+            "3. 保存截图到 output/screenshots/{dt}-douyin-score.png"
+          ]
+        }
+      ],
+      "filling_tip": "截图后，打开飞书文档，将图片拖入日报对应位置。"
+    },
+    "1688": {
+      "platform": "1688店铺",
+      "date": "2026-07-04",
+      "capture_steps": [
+        {
+          "step": 1,
+          "target": "1688卖家工作台 → 数据 → 生意参谋",
+          "output": "screenshots/2026-07-04-1688-core.png",
+          "instructions": [
+            "1. 打开浏览器，访问: https://work.1688.com/",
+            "2. 登录卖家工作台",
+            "3. 导航到 数据 → 生意参谋 → 首页",
+            "4. 截图：店铺GMV、访客数、浏览量、转化率",
+            "5. 保存截图到 output/screenshots/{dt}-1688-core.png"
+          ]
+        },
+        {
+          "step": 2,
+          "target": "1688生意参谋 → 流量分析",
+          "output": "screenshots/2026-07-04-1688-traffic.png",
+          "instructions": [
+            "1. 导航到 生意参谋 → 流量 → 流量概况",
+            "2. 截图流量来源分布（搜索流量、推荐流量、活动流量等）",
+            "3. 保存截图到 output/screenshots/{dt}-1688-traffic.png"
+          ]
+        },
+        {
+          "step": 3,
+          "target": "1688卖家工作台 → 店铺 → 店铺评分",
+          "output": "screenshots/2026-07-04-1688-bsr.png",
+          "instructions": [
+            "1. 导航到 店铺管理 → 店铺评分（BSR）",
+            "2. 截图BSR评分详情",
+            "3. 保存截图到 output/screenshots/{dt}-1688-bsr.png"
+          ]
+        }
+      ],
+      "filling_tip": "截图后，打开飞书文档，将图片拖入日报对应位置。"
+    }
+  }
+}
